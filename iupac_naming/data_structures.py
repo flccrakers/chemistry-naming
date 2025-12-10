@@ -62,7 +62,7 @@ class AtomInfo:
     bonding_number: int = 0  # λ-convention
     is_aromatic: bool = False
     implicit_h: int = 0
-
+    
     def __hash__(self):
         return hash(self.idx)
 
@@ -83,30 +83,30 @@ class RingInfo:
     heteroatoms: Dict[int, str]  # {atom_idx: element}
     element_sequence: Tuple[str, ...]
     bond_types: Tuple[int, ...] = field(default_factory=tuple)  # Bond orders
-
+    
     def __hash__(self):
         return hash(self.atoms)
-
+    
     @property
     def hetero_count(self) -> int:
         return len(self.heteroatoms)
-
+    
     @property
     def has_nitrogen(self) -> bool:
         return 'N' in self.heteroatoms.values()
-
+    
     @property
     def has_oxygen(self) -> bool:
         return 'O' in self.heteroatoms.values()
-
+    
     @property
     def has_sulfur(self) -> bool:
         return 'S' in self.heteroatoms.values()
-
+    
     @property
     def is_carbocyclic(self) -> bool:
         return self.hetero_count == 0
-
+    
     @property
     def is_heterocyclic(self) -> bool:
         return self.hetero_count > 0
@@ -242,7 +242,7 @@ class Unsaturation:
     """
     double_bonds: List[Tuple[int, int]]
     triple_bonds: List[Tuple[int, int]]
-
+    
     @property
     def total_unsaturation(self) -> int:
         return len(self.double_bonds) + 2 * len(self.triple_bonds)
@@ -292,37 +292,37 @@ class MoleculeAnalysis:
     # Basic info
     formula: str
     total_atoms: int
-
+    
     # Atoms
     atoms: List[AtomInfo]
-
+    
     # Ring systems (P-22 through P-28)
     rings: List[RingInfo]
     fused_systems: List[FusedRingSystem]
     spiro_systems: List[SpiroSystem]
     von_baeyer_systems: List[VonBaeyerSystem]
     ring_assemblies: List[List[int]]  # P-28
-
+    
     # Chains
     main_chain: Optional[List[int]] = None
     side_chains: List[List[int]] = field(default_factory=list)
-
+    
     # Functional groups (P-33)
     characteristic_groups: List[CharacteristicGroup] = field(default_factory=list)
     principal_group: Optional[CharacteristicGroup] = None
-
+    
     # Substituents (P-29, P-35)
     substituents: List[SubstituentGroup] = field(default_factory=list)
-
+    
     # Unsaturation (P-31)
     unsaturation: Optional[Unsaturation] = None
-
+    
     # Bridges (P-25.4)
     bridges: List[Bridge] = field(default_factory=list)
-
+    
     # Stereochemistry (P-90)
     stereocenters: List[StereocenterInfo] = field(default_factory=list)
-
+    
     # Parent structure type
     parent_type: str = "unknown"  # 'acyclic', 'monocyclic', 'fused', 'spiro', 'vonbaeyer', 'phane'
 
@@ -341,20 +341,20 @@ class NameComponents:
     substituent_prefixes: List[str] = field(default_factory=list)
     bridge_prefixes: List[str] = field(default_factory=list)
     fusion_prefixes: List[str] = field(default_factory=list)
-
+    
     # Parent structure
     parent_name: str = ""
-
+    
     # Modifications
     hydro_prefixes: List[str] = field(default_factory=list)  # P-31.2
     unsaturation_suffixes: List[str] = field(default_factory=list)  # -ene, -yne
-
+    
     # Suffixes (for principal characteristic group)
     functional_suffix: str = ""
-
+    
     # Locants
     locants: Dict[str, List[Union[int, str]]] = field(default_factory=dict)
-
+    
     def build_name(self) -> str:
         """Assemble the complete name from components."""
         # This will be implemented in the name builder

@@ -45,7 +45,7 @@ __all__ = [
     'get_multiplicative_prefix', 'format_locants', 'compare_locant_sets',
     'alphanumerical_sort_key', 'format_indicated_hydrogen',
     'NameWriter', 'add_primes',
-
+    
     # P-2 Parent Hydrides
     'MONONUCLEAR_HYDRIDES', 'RETAINED_HETEROCYCLES',
     'RETAINED_FUSED_HYDROCARBONS', 'RETAINED_FUSED_HETEROCYCLES',
@@ -53,14 +53,14 @@ __all__ = [
     'HANTZSCH_WIDMAN_PREFIXES', 'HW_STEMS_SATURATED', 'HW_STEMS_UNSATURATED',
     'get_acyclic_hydride_name', 'get_cycloalkane_name',
     'get_hantzsch_widman_name', 'get_ring_assembly_name',
-
+    
     # P-3 Characteristic Groups
     'FUNCTIONAL_SUFFIXES', 'RETAINED_FUNCTIONAL_PARENTS',
     'CHARACTERISTIC_GROUP_PREFIXES', 'HYDRIDE_DERIVED_PREFIXES',
     'format_unsaturation', 'format_hydro_prefix', 'format_dehydro_prefix',
     'get_substituent_prefix', 'get_suffix_for_group',
     'build_compound_substituent',
-
+    
     # P-4 Name Construction
     'CLASS_SENIORITY', 'get_class_seniority', 'compare_class_seniority',
     'compare_ring_seniority', 'compare_fused_system_seniority',

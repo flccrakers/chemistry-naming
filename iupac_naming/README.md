@@ -1,4 +1,3 @@
-# chemistry-naming
 # IUPAC Nomenclature System
 
 Implementation of IUPAC 2013 Blue Book nomenclature rules for systematic naming of organic compounds.

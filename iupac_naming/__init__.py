@@ -17,16 +17,16 @@ Structure follows the Blue Book chapters:
 
 Usage:
     from iupac_nomenclature import IUPACNamer
-
+    
     namer = IUPACNamer()
     name = namer.name_from_smiles('CCO')  # -> ethanol
 
-Author: Frank Hoonakker with Claude AI
+Author: Generated with Claude AI
 Reference: IUPAC Recommendations 2013 (Blue Book)
 """
 
 __version__ = "0.1.0"
-__author__ = "Frank Hoonakker"
+__author__ = "IUPAC Nomenclature Project"
 
 from .namer import IUPACNamer
 from .data_structures import (
@@ -37,7 +37,7 @@ from .data_structures import (
 __all__ = [
     "IUPACNamer",
     "AtomInfo",
-    "RingInfo",
+    "RingInfo", 
     "FusedRingSystem",
     "SpiroSystem",
     "CharacteristicGroup",
