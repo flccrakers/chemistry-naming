@@ -204,6 +204,33 @@ class IUPACNamer:
         """
         self._log("Naming fused ring system")
         
+        # Check if this is a complex fused system requiring specialized handling
+        # Complex systems have: multiple components, bridges (epoxy), or many rings
+        ring_info = mol.GetRingInfo()
+        num_rings = ring_info.NumRings()
+        
+        # Check for O/S heteroatoms that might form bridges
+        has_potential_bridge = False
+        for atom in mol.GetAtoms():
+            if atom.GetSymbol() in ('O', 'S'):
+                # Check if O/S is in a ring
+                if atom.IsInRing():
+                    has_potential_bridge = True
+                    break
+        
+        # Use ComplexFusedNamer for systems with bridges or many rings (>4)
+        if has_potential_bridge or num_rings > 4:
+            self._log("Using ComplexFusedNamer for complex system")
+            try:
+                from .analyzers.complex_fused_namer import ComplexFusedNamer
+                namer = ComplexFusedNamer(mol, verbose=self.verbose)
+                result = namer.name()
+                if result and result != "unknown_fused_system":
+                    return result
+            except Exception as e:
+                self._log(f"ComplexFusedNamer failed: {e}")
+        
+        # Fall back to standard approach
         # Find components
         components = ComponentMatcher.find_all_components(mol, analysis.rings)
         
@@ -223,6 +250,44 @@ class IUPACNamer:
         Reference: P-24
         """
         self._log("Naming spiro system")
+        
+        # Check for complex spiro (trispiro, polyspiro)
+        ring_info = mol.GetRingInfo()
+        rings = list(ring_info.AtomRings())
+        
+        # Count spiro junctions
+        atom_ring_count = {}
+        for ring in rings:
+            for atom_idx in ring:
+                atom_ring_count[atom_idx] = atom_ring_count.get(atom_idx, 0) + 1
+        
+        spiro_atoms = [idx for idx, count in atom_ring_count.items() if count >= 2]
+        
+        # Also check for fused components within the spiro system
+        has_fused = False
+        for idx in spiro_atoms:
+            atom = mol.GetAtomWithIdx(idx)
+            for neighbor in atom.GetNeighbors():
+                n_idx = neighbor.GetIdx()
+                if atom_ring_count.get(n_idx, 0) >= 2:
+                    has_fused = True
+                    break
+            if has_fused:
+                break
+        
+        # Use TrispiroNamer for complex spiro systems (2+ junctions or has fused)
+        if len(spiro_atoms) >= 2 or has_fused:
+            self._log("Using TrispiroNamer for complex spiro system")
+            try:
+                from .analyzers.complex_fused_namer import TrispiroNamer
+                namer = TrispiroNamer(mol, verbose=self.verbose)
+                result = namer.name()
+                if result and result != "unknown":
+                    return result
+            except Exception as e:
+                self._log(f"TrispiroNamer failed: {e}")
+        
+        # Fall back to standard approach
         builder = NameBuilder(analysis, mol=mol, verbose=self.verbose)
         return builder.build_name()
     

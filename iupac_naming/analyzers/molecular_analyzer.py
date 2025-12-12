@@ -651,7 +651,52 @@ class MolecularAnalyzer:
             principal_group.is_principal = True
         
         # Determine parent type
-        if fused_systems:
+        # Special case: a system can be both "fused" (within components) and "spiro" (between components)
+        # For example, trispiro with cyclopenta[b]pyran has internal fusion but is globally spiro
+        
+        has_spiro_junctions = spiro_systems and len(spiro_systems) > 0 and any(
+            s.is_polyspiro or len(s.spiro_atoms) >= 1 for s in spiro_systems
+        )
+        
+        # Count true spiro connections (single atoms connecting distinct ring groups)
+        ring_info = self.mol.GetRingInfo()
+        all_rings = list(ring_info.AtomRings())
+        
+        if has_spiro_junctions and len(all_rings) >= 3:
+            # Check if this is primarily a spiro system
+            # Count atoms in exactly 2 rings that are NOT adjacent to other shared atoms
+            atom_ring_count = {}
+            for ring in all_rings:
+                for atom_idx in ring:
+                    atom_ring_count[atom_idx] = atom_ring_count.get(atom_idx, 0) + 1
+            
+            # True spiro atoms: in 2+ rings, and no adjacent atom is also in 2+ rings
+            true_spiro_count = 0
+            fused_shared_count = 0
+            
+            for atom_idx, count in atom_ring_count.items():
+                if count >= 2:
+                    atom = self.mol.GetAtomWithIdx(atom_idx)
+                    has_shared_neighbor = False
+                    for neighbor in atom.GetNeighbors():
+                        n_idx = neighbor.GetIdx()
+                        if atom_ring_count.get(n_idx, 0) >= 2:
+                            has_shared_neighbor = True
+                            break
+                    
+                    if has_shared_neighbor:
+                        fused_shared_count += 1
+                    else:
+                        true_spiro_count += 1
+            
+            # If we have true spiro junctions connecting groups, it's primarily spiro
+            if true_spiro_count >= 2:
+                parent_type = 'spiro'
+            elif fused_systems:
+                parent_type = 'fused'
+            else:
+                parent_type = 'spiro'
+        elif fused_systems:
             parent_type = 'fused'
         elif spiro_systems:
             parent_type = 'spiro'

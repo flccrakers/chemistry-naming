@@ -2,7 +2,7 @@
 IUPAC Nomenclature Rules
 ========================
 
-Implementation of IUPAC 2013 Blue Book chapters P-1 through P-9.
+Implementation of IUPAC 2013 Blue Book chapters P-1 through P-10.
 """
 
 from .p1_general import (
@@ -37,6 +37,21 @@ from .p4_name_construction import (
     select_preferred_name, select_principal_substituent_chain,
     determine_parent_structure
 )
+
+# P-5: Name Selection (lazy import to avoid circular dependencies)
+# from .p5_name_selection import (...)
+
+# P-6: Compound Classes (lazy import)
+# from .p6_compound_classes import (...)
+
+# P-9: Stereochemistry (lazy import)
+# from .p9_stereochemistry import (...)
+
+# P-24: Spiro Systems (lazy import)
+# from .p24_spiro import (...)
+
+# P-25.4: Bridged Fused Systems (lazy import)
+# from .p25_bridges import (...)
 
 __all__ = [
     # P-1 General
